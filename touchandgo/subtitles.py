@@ -11,8 +11,10 @@ from subliminal.video import Video
 def get_subtitle(magnet, lang):
     print("Explorando torrent")
     lt_session = session()
+    lt_session.listen_on(6881, 6891)
     params = {"save_path": "/tmp"}
     handle = add_magnet_uri(lt_session, magnet, params)
+    lt_session.start_dht()
     print "esperando"
     while (not handle.has_metadata()):
         sleep(.1)
@@ -32,7 +34,7 @@ def get_subtitle(magnet, lang):
     guess = guess_video_info(filepath, info = ['filename'])
     video = Video.fromguess(filepath, guess)
     video.size = biggest_file[1]
-    print("Bajando el subtitulo")
+    print("Bajando el subtitulo para lang = " + lang)
     subtitle = download_best_subtitles([video], {Language(lang)}, single=True)
     if not len(subtitle):
         subtitle = None
